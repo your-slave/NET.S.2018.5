@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace NET.S._2018.Karakouski._4.Tests
 {
-    public class Class1
+    public class BaseNumeralRepresentationExtensionTests
     {
     }
 }
