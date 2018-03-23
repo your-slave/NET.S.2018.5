@@ -29,5 +29,6 @@ namespace NET.S._2018.Karakouski._4.Tests
         [TestCase(-12, 3, 9, ExpectedResult = 3)]
         [TestCase(36, -12, -3, 9, ExpectedResult = 3)]
         public int BinaryMethod_PoistiveAndNegativeNumbers_TestCalulations(params int[] args) => GcdCalulator.BinaryGcdCalc(args);
+
     }
 }

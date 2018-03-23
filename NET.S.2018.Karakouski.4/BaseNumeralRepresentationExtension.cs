@@ -4,23 +4,96 @@ using System.Text;
 
 namespace NET.S._2018.Karakouski._4
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class BaseNumeralRepresentationExtension
     {
         private static string legal6BaseChars = "FEDCBA9876543210";
 
-        public static string BinaryRepresentation(this double number)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        public static string IEEE754Representation(this double number)
         {
-            //1025 (decimal) to base 15:
-            //1025 / 15 = 68 , remainder 5
-            //68 / 15 = 4 , remainder 8
-            //4 / 15 = 0 , remainder 4
+            int beforeComa = (int) number / 10;
+            int afterComa = (int) number % 10;
 
+            int numberOfDigitsBeforeComa = beforeComa.ToString().Length;
+            int numberOfDigitsAfterComa = afterComa.ToString().Length;
 
-            //Поэтому уже в самых первых машинах начали использовать трюк, делая первый бит мантиссы всегда положительным. Такое предаставление назвали нормализованным.
+            StringBuilder mantissa = new StringBuilder();
+            int temp = beforeComa;
 
-            //aftrwer , the same but with minus
+            while (temp != 1)
+            {
+                mantissa.Append(temp % 2);
+                temp /= 2;
+            }
 
-            throw new NotImplementedException();
+            int numberOfBinaryDigitsBeforeComa = mantissa.Length;
+
+            temp = afterComa;
+
+            while (temp !=0)
+            {
+                temp <<= 2;
+                mantissa.Append(temp/10);
+            }
+
+            if (mantissa.Length > 23)
+                throw new ArgumentOutOfRangeException();
+
+            mantissa.Remove(0, 1);
+            FillTheRestWithZeroes(mantissa, 23, true);
+
+            int intExponent = numberOfDigitsAfterComa + 127;
+            StringBuilder exponent = new StringBuilder();
+
+            temp = intExponent;
+            while (temp != 1)
+            {
+                exponent.Append(temp % 2);
+                temp /= 2;
+            }
+
+            FillTheRestWithZeroes(exponent, 8);
+
+            StringBuilder result = new StringBuilder();
+            if (number > 0)
+                result.Append('0');
+            else
+                result.Append('1');
+            result.Append(exponent);
+            result.Append(mantissa);
+
+            return result.ToString();
+        }
+
+        private static void FillTheRestWithZeroes(StringBuilder sb, int size, bool reverse = false)
+        {
+            if(reverse)
+            {
+                if (sb.Length < size)
+                {
+                    for (int i = 0; i < size - sb.Length; i++)
+                    {
+                        sb.Append('0');
+                    }
+                }
+            }
+            else
+            {
+                if (sb.Length < size)
+                {
+                    for (int i = 0; i < size - sb.Length; i++)
+                    {
+                        sb.Insert(0, '0');
+                    }
+                }
+            }
         }
 
         public static string Base10Number(this string number, int nBase)
