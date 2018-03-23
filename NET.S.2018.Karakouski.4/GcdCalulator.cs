@@ -46,7 +46,7 @@ namespace NET.S._2018.Karakouski._4
 
             for (int i = 1; i < args.Length; i++)
             {
-                gcd = BinaryGcdCalc(gcd, args[i]);
+                gcd = BinaryGcdCalc(gcd, Math.Abs(args[i]));
             }
 
             return gcd;
@@ -64,13 +64,13 @@ namespace NET.S._2018.Karakouski._4
             if (a == 0) return b;
             if (b == 0) return a;
 
-            if ((b & 1) == 0 && (a & 1) == 0) return BinaryGcdCalc(b >> 1, a >> 1) << 1;
+            if ((b % 2) == 0 && (a % 2) == 0) return BinaryGcdCalc(b >> 1, a >> 1) << 1;
 
             // a is even, b is odd
-            else if ((b & 1) == 0) return BinaryGcdCalc(b >> 1, a);
+            else if ((b % 2) == 1) return BinaryGcdCalc(b >> 1, a);
 
             // a is odd, b is even
-            else if ((a & 1) == 0) return BinaryGcdCalc(b, a >> 1);
+            else if ((a % 2) == 1) return BinaryGcdCalc(b, a >> 1);
 
             // a and b odd, a >= b
             else if (b >= a) return BinaryGcdCalc((b - a) >> 1, a);
