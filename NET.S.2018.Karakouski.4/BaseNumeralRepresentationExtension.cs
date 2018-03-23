@@ -18,38 +18,36 @@ namespace NET.S._2018.Karakouski._4
         /// <returns></returns>
         public static string IEEE754Representation(this double number)
         {
-            int beforeComa = (int) number / 10;
-            int afterComa = (int) number % 10;
+            int beforeComa = Math.Abs((int) number);
+            double afterComa = Math.Abs(number) - Math.Abs(beforeComa);
 
-            int numberOfDigitsBeforeComa = beforeComa.ToString().Length;
-            int numberOfDigitsAfterComa = afterComa.ToString().Length;
+            
 
             StringBuilder mantissa = new StringBuilder();
             int temp = beforeComa;
 
-            while (temp != 1)
+            while (temp > 0)
             {
                 mantissa.Append(temp % 2);
                 temp /= 2;
             }
 
-            int numberOfBinaryDigitsBeforeComa = mantissa.Length;
+            int numberOfDigitsBeforeComa = mantissa.Length;
 
-            temp = afterComa;
+            double doubleTemp = afterComa;
 
-            while (temp !=0)
+            int count = 0;
+            while (doubleTemp % 10 < 1 && count < 23)
             {
-                temp <<= 2;
-                mantissa.Append(temp/10);
+                doubleTemp *= 2;
+                mantissa.Append((int)(doubleTemp));
+                count++;
             }
 
-            if (mantissa.Length > 23)
-                throw new ArgumentOutOfRangeException();
-
             mantissa.Remove(0, 1);
-            FillTheRestWithZeroes(mantissa, 23, true);
+            FillTheRestWithZeroes(mantissa, 52, true);
 
-            int intExponent = numberOfDigitsAfterComa + 127;
+            int intExponent = numberOfDigitsBeforeComa - 1 + 127;
             StringBuilder exponent = new StringBuilder();
 
             temp = intExponent;
@@ -59,7 +57,7 @@ namespace NET.S._2018.Karakouski._4
                 temp /= 2;
             }
 
-            FillTheRestWithZeroes(exponent, 8);
+            FillTheRestWithZeroes(exponent, 11);
 
             StringBuilder result = new StringBuilder();
             if (number > 0)

@@ -42,7 +42,7 @@ namespace NET.S._2018.Karakouski._4
         /// <returns></returns>
         public static int BinaryGcdCalc(params int[] args)
         {
-            int gcd = args[0];
+            int gcd = Math.Abs(args[0]);
 
             for (int i = 1; i < args.Length; i++)
             {
