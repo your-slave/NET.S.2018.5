@@ -9,6 +9,10 @@ namespace NET.S._2018.Karakouski._4
     /// </summary>
     public static class BaseNumeralRepresentationExtension
     {
+        static string zeroMantissa = "0000000000000000000000000000000000000000000000000000";//52 bits
+        static string zeroExponenta = "00000000000";//11 bits
+        static string onesExponenta = "11111111111";//11 bits
+
         private static string legal6BaseChars = "FEDCBA9876543210";
 
         /// <summary>
@@ -18,78 +22,80 @@ namespace NET.S._2018.Karakouski._4
         /// <returns></returns>
         public static string IEEE754Representation(this double number)
         {
-            int beforeComa = Math.Abs((int) number);
-            double afterComa = Math.Abs(number) - Math.Abs(beforeComa);
-
-            
-
-            StringBuilder mantissa = new StringBuilder();
-            int temp = beforeComa;
-
-            while (temp > 0)
-            {
-                mantissa.Append(temp % 2);
-                temp /= 2;
-            }
-
-            int numberOfDigitsBeforeComa = mantissa.Length;
-
-            double doubleTemp = afterComa;
-
-            int count = 0;
-            while (doubleTemp % 10 < 1 && count < 23)
-            {
-                doubleTemp *= 2;
-                mantissa.Append((int)(doubleTemp));
-                count++;
-            }
-
-            mantissa.Remove(0, 1);
-            FillTheRestWithZeroes(mantissa, 52, true);
-
-            int intExponent = numberOfDigitsBeforeComa - 1 + 127;
-            StringBuilder exponent = new StringBuilder();
-
-            temp = intExponent;
-            while (temp != 1)
-            {
-                exponent.Append(temp % 2);
-                temp /= 2;
-            }
-
-            FillTheRestWithZeroes(exponent, 11);
 
             StringBuilder result = new StringBuilder();
+
+            switch (number)
+            {
+                case (Double.NegativeInfinity):
+                    {
+                        return result.Append('1').Append(onesExponenta).Append(zeroMantissa).ToString();
+                    }
+                case (Double.PositiveInfinity):
+                    {
+                        return result.Append('0').Append(onesExponenta).Append(zeroMantissa).ToString();
+                    }
+                case (-0.0):
+                    {
+                        return result.Append('1').Append(zeroExponenta).Append(zeroMantissa).ToString();
+                    }
+                case (Double.NaN):
+                    {
+                        return result.Append('1').Append(onesExponenta).Append('1').Append(zeroMantissa.Remove(0,1)).ToString();
+                    }
+                //case (0.0): //multimple cases with zero?..
+                //    {
+                //        return result.Append('0').Append(zeroExponenta).Append(zeroMantisa).ToString();
+                //    }
+
+            }
+
+            if(number == -0.0)
+                return result.Append('0').Append(zeroExponenta).Append(zeroMantissa).ToString();
+
             if (number > 0)
                 result.Append('0');
             else
                 result.Append('1');
+
+            number = Math.Abs(number);
+
+            int intExponent = (int)Math.Log(number, 2);
+            intExponent += 1023;
+
+            double doubleMantissa = number / intExponent;
+
+            StringBuilder mantissa = new StringBuilder();
+            StringBuilder exponent = new StringBuilder();
+
+            while (intExponent > 0)
+            {
+                exponent.Insert(0, intExponent % 2);
+                intExponent /= 2;
+            }
+
+            int count = 0;
+            while (((doubleMantissa % 1) != 0) || count < 52)
+            {
+                doubleMantissa *= 2;
+                mantissa.Append(((int)(doubleMantissa)));
+                doubleMantissa %= 1;
+                count++;
+            }
+
             result.Append(exponent);
             result.Append(mantissa);
 
             return result.ToString();
         }
 
-        private static void FillTheRestWithZeroes(StringBuilder sb, int size, bool reverse = false)
+        private static void FillTheRestWithZeroes(StringBuilder sb, int size)
         {
-            if(reverse)
+            if (sb.Length < size)
             {
-                if (sb.Length < size)
+                for (int i = 0; i < size - sb.Length; i++)
                 {
-                    for (int i = 0; i < size - sb.Length; i++)
-                    {
-                        sb.Append('0');
-                    }
-                }
-            }
-            else
-            {
-                if (sb.Length < size)
-                {
-                    for (int i = 0; i < size - sb.Length; i++)
-                    {
-                        sb.Insert(0, '0');
-                    }
+                    sb.Append('0');
                 }
             }
         }
