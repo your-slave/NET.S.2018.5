@@ -13,8 +13,7 @@ namespace NET.S._2018.Karakouski._4
         static string zeroExponenta = "00000000000";//11 bits
         static string onesExponenta = "11111111111";//11 bits
 
-        private static string legal6BaseChars = "FEDCBA9876543210";
-
+        private static string legal6BaseChars = "0123456789ABCCDEF";
         /// <summary>
         /// 
         /// </summary>
@@ -107,7 +106,7 @@ namespace NET.S._2018.Karakouski._4
 
             number = number.ToUpper();
 
-            if (!number.All(c => legal6BaseChars.Substring(nBase-1).Contains(c)))
+            if (!number.All(c => legal6BaseChars.Substring(0, nBase+1).Contains(c)))
             {
                 throw new ArgumentException(nameof(number));
             }
