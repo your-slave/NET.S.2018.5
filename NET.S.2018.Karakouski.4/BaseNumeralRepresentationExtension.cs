@@ -5,7 +5,7 @@ using System.Text;
 namespace NET.S._2018.Karakouski._4
 {
     /// <summary>
-    /// 
+    /// Impliments method of converstion number from 1o base to IEE-754 double and method of conversation of 10 base number to and base from 2 to 16
     /// </summary>
     public static class BaseNumeralRepresentationExtension
     {
@@ -15,7 +15,7 @@ namespace NET.S._2018.Karakouski._4
 
         private static string legal6BaseChars = "0123456789ABCCDEF";
         /// <summary>
-        /// 
+        /// Impliments method of converstion number from 1o base to IEE-754 double
         /// </summary>
         /// <param name="number"></param>
         /// <returns></returns>
@@ -88,6 +88,11 @@ namespace NET.S._2018.Karakouski._4
             return result.ToString();
         }
 
+        /// <summary>
+        /// Fills number with zeroes up to required size
+        /// </summary>
+        /// <param name="sb"></param>
+        /// <param name="size"></param>
         private static void FillTheRestWithZeroes(StringBuilder sb, int size)
         {
             if (sb.Length < size)
@@ -98,7 +103,12 @@ namespace NET.S._2018.Karakouski._4
                 }
             }
         }
-
+        /// <summary>
+        /// Impliments method of conversation of 10 base number to and base from 2 to 16
+        /// </summary>
+        /// <param name="number"></param>
+        /// <param name="nBase"></param>
+        /// <returns></returns>
         public static string Base10Number(this string number, int nBase)
         {
             if (nBase < 2 || nBase > 16)
@@ -121,6 +131,11 @@ namespace NET.S._2018.Karakouski._4
             return result.ToString();
         } 
         
+        /// <summary>
+        /// Converts symbolic representation to digit representation
+        /// </summary>
+        /// <param name="symbol"></param>
+        /// <returns></returns>
         private static int GetNumeric10BaseRespresentIon(this char symbol)
         {
             if(Char.IsDigit(symbol))
